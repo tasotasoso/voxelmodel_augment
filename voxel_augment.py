@@ -28,25 +28,11 @@ def visualize_voxel(res: np.ndarray, color: str = "blue") -> None:
     plt.show()
 
 
-def load_npy(npy_file_path: str):
+def load_npy(npy_file_path: str) -> np.ndarray:
     """Load npy file includes voxel model"""
     return np.load(npy_file_path)
 
-
-def main():
-    # Argments
-    parser = argparse.ArgumentParser(description='Voxel_model_augment.')
-    parser.add_argument('npy_path', help='Voxel npy filepath.')
-    parser.add_argument('side_lenght', help='Side lenght augmented voxel model.')
-    args = parser.parse_args()
-
-    # Get argments
-    npy_path = args.npy_path
-    side_length = int(args.side_lenght)
-
-    # load voxel model
-    voxel_map = load_npy(npy_path)
-
+def quarry(voxel_map: np.ndarray, side_length:int) -> np.ndarray:
     x_len, y_len, z_len = voxel_map.shape
     if side_length > min(x_len, y_len, z_len):
         print(
@@ -66,7 +52,29 @@ def main():
     voxel_map_masked[x_start:x_end, y_start:y_end,
                      z_start:z_end] = voxel_map[x_start:x_end, y_start:y_end, z_start:z_end]
 
+    return voxel_map_masked
+
+
+def main():
+    # Argments
+    parser = argparse.ArgumentParser(description='Voxel_model_augment.')
+    parser.add_argument('npy_path', help='Voxel npy filepath.')
+    parser.add_argument('side_lenght', help='Side lenght augmented voxel model.')
+    args = parser.parse_args()
+
+    # Get argments
+    npy_path = args.npy_path
+    side_length = int(args.side_lenght)
+
+    # load voxel model
+    voxel_map = load_npy(npy_path)
+
+    #Augment
+    voxel_map_masked = quarry(voxel_map, side_length)
+
     visualize_voxel(voxel_map_masked)
+    ###If you want to save,
+    #np.save("./voxcelized", visualize_voxel)
 
 
 if __name__ == "__main__":
